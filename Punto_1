@@ -40,12 +40,16 @@
          Escribir("Ingrese 1 o 2 para hacer una consulta")
          Leer decision
          
+         //Creamos un menu del cual separamos los dos casos que tenemos  
+         
          DD (decision)
           Caso 1:
           
             sw = 0
             Escribir("Digite su cedula:")
             Leer cc
+            
+            //Verificamos que en efecto el empleado este comparandolos con todos los de la lista 
          
             Abrir Candidatos ("Leer")
               Leer Reg_Candidatos
@@ -56,10 +60,17 @@
                 Leer Reg_Candidatos
               Fin_Mientras
             Cerrar Candidatos
+            
+            //Separamos los casos en el que se encuentre o no 
          
             Si(sw = 0)
               Escribir("Lo siento, no perteneces al programa")
             Sino
+            
+             //Abrimos candidatos y nos establecemos en la posicion donde tenemos nuestro empleado
+             //Luego abrimos Empresas para compara si nuestro empleado cuanta con los requisitos para los puestos 
+             // Si cuenta con el titulo y el puntaje necesario 
+            
               Abrir Candidatos("Leer")
                 Leer Reg_Candidatos
                 Mientras(!EOF(candidatos) y Cedula != cc)
@@ -92,6 +103,8 @@
             Escribir("Digite el nombre de la empresa:")
             Leer nom
             
+            //Verificamos que en efecto la empresa este comparandolos con todos los de la lista
+            
             Abrir Empresas("Leer")
               Leer Reg_Empresas
               Mientras(!EOF(Empresas))
@@ -102,9 +115,15 @@
               Fin_Mientras
             Cerrar Empresas
             
+            //Separamos los casos en el que se encuentre o no 
+            
             Si(sw = 0)
               Escribir("Lo siento, no pertenece al programa")
             Sino
+            
+            //Buscamos en el archivo todas las pociones que coincidan con el nombre de la empresa 
+            // e imprimimos la informacion
+            
               Abrir Empresas("Leer")
                 Leer Reg_Empresas
                 Mientras(!EOF(Empresas))
@@ -126,6 +145,156 @@
          Fin_DD
          
          FIN
+         
+         
+2.	(2.0) Una aplicación informática de un centro universitario dispone de la siguiente información sobre una carrera:
+          Consultas:
+          Dada una cédula, diga la información del profesor y cuáles son los nombres de las asignaturas y cursos que esté tiene a su cargo 
+          (tener en cuenta que nombre de la asignatura no es lo mismo que cursos).
+          ¿Cuál es la categoría con mayor personal en la institución?¿Cuál es la categoría que mayor sueldo tiene? ¿Cuál es el promedio salarial
+          por categoría?. El sueldo base anual depende de la categoría:
+          a) Catedrático: 20000 euros
+          b) Titular: 15000 euros
+          c) Asociado: 10000 euros
+          d) Ayudante: 8000 euros
+          
+          INICIO
+          
+          Buffer
+          Asignatura
+          Disco
+          Reg_Asignatura
+            Codigo_A  X[]
+            Nombre_A  X[]
+            Curso  X[]
+            Credito  X[]
+            Cedula_P  X[]
+          Clave principal: Codigo_A	
+          Clave secundaria Cedula_P	
+          Fin buffer
+          
+          Buffer
+          Nombre_Profesores
+          Disco
+          Reg_Nombre_Profesores
+            Nombre_P  X[]
+            Cedula_P  X[]
+            Fecha_I  X[]
+            Fecha_N	 X[]
+            Categoria  X[]
+          Clave principal: Cedula_P		
+          Fin buffer
+          
+          Escribir(“Dijite la cedula:”) 
+          Leer Cedula 
+          
+          //Llenamos de 0  este vector porque lo usamos de contador despues
+
+          Para i = 1 hasta 4 
+            V[i] ← 0 
+          Fin para 
+          
+          //Buscamos la cedula del profesor en el archivo e imprimimos la informacion que tenemos de el 
+
+          Abrir Profesores (“Leer”)
+            Leer Reg_Profesores 
+            Si (Reg_Profesores Cedula_P = Cedula)
+              Leer Reg_Profesores Cedula_P = Cedula
+              Escribir("===INFO===")
+              EScribir("Nombre del Profesor:", Nombre_P)
+              EScribir("Cedula del profesor:", Cedula_P)
+              EScribir("Fecha de ingreso:", Fecha_I)
+              EScribir("Fecha de nacimiento:", Fecha_N)
+              EScribir("Categoria:", Categoria)
+            Sino 
+              Escribir(“Cedula no existe ”)
+            Finsi
+          Cerrar Profesores
+          
+          //Luego abrimo el archivo de asignatura y leemos todos los Asignaturas con su correspondiente curso del profesor 
+          //ejemplo el usuario vera: (obviamente seran materias y cursos que solo imparte el profesor dado que filtramos por cedula)
+          // mates 01
+          // español 01
+          // mates 02
+          // ingles 01
+          // español 02
+          
+          EScribir("=== Asignaturas y cursos ===")
+
+          Abrir Asignatura (“Leer”)
+            Leer Reg_Asignatura
+            Mientras(!Eof(Asignatura))
+              Si (Cedula_P = Cedula)
+                EScribir("Asignatura: ", Nombre_A, " curso: ", curso)
+              Finsi
+              Leer Reg_Asignatura
+            Fin_Mientras
+          Cerrar Asignatura
+          
+          //Hacemos un conteo de todos los profes con las diferentes categorias y las guardamos en el vector 
+          //note que es el mismo que inicializamos arriba 
+
+          Abrir Profesores (“Leer”)
+            Leer Reg_Profesores
+            Mientras(!Eof(Profesores))
+              Dd (Categoria)
+                Caso “Catedratico”
+                  V[1] ← V[1] + 1
+                    Caso “Titular”
+                  V[2] ← V[2] + 1
+                    Caso “Asociado”
+                  V[3] ← V[3] + 1
+                    Caso “Ayudante”
+                  V[4] ← V[4] + 1
+              Fin_Dd
+              Leer Reg_Profesores
+            Fin_Mientras
+          Cerrar Profesores
+          
+          //Organizamos el vector de menor a mayor asi nos aseguramos de tener la
+          //categoria con mas profesores o en caso de empate la ultima categoria con 
+          //el numero mayor 
+
+          Para i = 1 hasta 3 con paso 1
+            Para j = 1 hasta 3 - i con paso 1
+              Si (V[j] < V[j+1])
+                aux ← V[j+1]
+                V[j+1] ← V[j]
+                V[j] ← aux
+              Fin_si
+            Fin_Para
+          Fin_Para
+          
+          //Imprimirmos la ultima parte del vector, y respondemos a las demas preguntas 
+
+          Escribir(“La categoria con mayor personal es: ” V[4] )
+          Escribir(“La categoria con mayor sueldo es Catedratico”)
+          Escribir("El promedio salarial por categoria es: ")
+          Escribir("Catedratico: 20000 euros")
+          Escribir("Titular: 15000 euros")
+          Escribir("Asociado: 10000 euros")
+          Escribir("Ayudante: 8000 euros")
+          
+          FIN
+          
+          
+          
+3.        (1.0) Para modificar un registro en un archivo secuencial indexado se debe.
+          A.Buscar el registro desde la primera posición y una vez encontrado modificarlo directamente.
+          B.Se puede buscar el registro de manera directa y modificarlo enseguida.
+          C.Se puede buscar el registro de manera directa, modificar en el código y reescribirlo en la misma posición.
+          D.Empezando a leer desde el primer registro hasta encontrar el registro a modificar (todos los registros anteriores se guardan en un archivo temporal),
+          modificarlo en el código, eliminarlo y guardarlo en la última posición.
+          
+          RESPUESTA: B
+          
+          !! se tiene fe profesor:" !!
+          tenga piedad 
+
+
+          
+
+
          
          
            
