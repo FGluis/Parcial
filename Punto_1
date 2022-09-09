@@ -1,0 +1,131 @@
+1.	(2.0) Una agencia de empleo le ha encargado el diseño de un algoritmo que sirva de soporte a un servicio de búsqueda de empleo.
+          Para esto usted cuenta con al menos dos archivos (no puede asumir que están ordenado por algún campo).  
+          Las consultas que debe hacer son:
+          •	Se debe pedir por pantalla la cedula de un candidato, validar si este está inscrito a la agencia de empleo y si lo está,
+          buscar que posibilidades de trabajo(s) hay para él. Para saber si un empleado es apto para un puesto debe tener por encima
+          del puntaje mínimo requerido para la vacante. El resultado debe ser mostrado por pantalla.
+          •	Se debe pedir por pantalla el nombre de una empresa, validar que este inscrita en la agencia de empleo y si lo está, mostrar
+          por pantalla la información de todas las vacantes que esta tiene registrada.
+
+         INICIO
+          
+         Buffer 
+          Candidatos
+          Disco
+          Reg_Candidatos
+            Cedula  N[10]
+            Nombre  X[30]
+            Direccion X[30]
+            Celular N[10]
+            Email   X[30]
+            Titulo  X[30]
+            Puntos  N[3]
+         Fin Buffer
+         
+         Buffer 
+          Empresas
+          Disco
+          Reg_Empresas
+            Descripcion  X[30]
+            Salario  N[10]
+            Nombre_E X[30]
+            Titulo_req X[30]
+            Puntaje_min  X[3]
+            Cedula_E  N[10]
+            Email_E   X[30]
+         Fin Buffer
+         
+         
+         Escribir("Bienvenido al mejor sofward para buscar empleo")
+         Escribir("Ingrese 1 o 2 para hacer una consulta")
+         Leer decision
+         
+         DD (decision)
+          Caso 1:
+          
+            sw = 0
+            Escribir("Digite su cedula:")
+            Leer cc
+         
+            Abrir Candidatos ("Leer")
+              Leer Reg_Candidatos
+              Mientras(!EOF(candidatos))
+                Si( cc = Cedula )
+                  sw = 1
+                Fin si
+                Leer Reg_Candidatos
+              Fin_Mientras
+            Cerrar Candidatos
+         
+            Si(sw = 0)
+              Escribir("Lo siento, no perteneces al programa")
+            Sino
+              Abrir Candidatos("Leer")
+                Leer Reg_Candidatos
+                Mientras(!EOF(candidatos) y Cedula != cc)
+                  Leer Reg_Candidatos
+                Fin_Mientras
+                Abrir Empresas("leer")
+                  Leer Reg_Empresas
+                  Mientras(!EOF(Empresas))
+                    Si(Titulo = Titulo_req)
+                      Si (Puntos > Puntaje_min)
+                        Escribir("Usted es apto para este empleo:")
+                        Escribir("Descripcion: ", Descripcion )
+                        Escribir("Salario: ", Salario )
+                        Escribir("Nombre de la empresa: ", Nombre_E )
+                        Escribir("Titulo necesario: ", Titulo_req )
+                        Escribir("Puntaje necesario: ", Puntaje_min )
+                        Escribir("Cedula del Empleador: ", Cedula_E )
+                        Escribir("Email del empleador ", Email_E )
+                      Finsi 
+                    Finsi
+                    Leer Reg_Empresas
+                  Fin_Mientras
+                Cerrar Empresas
+              Cerrar Candidatos
+            Finsi
+
+          Caso 2:
+            
+            sw = 0
+            Escribir("Digite el nombre de la empresa:")
+            Leer nom
+            
+            Abrir Empresas("Leer")
+              Leer Reg_Empresas
+              Mientras(!EOF(Empresas))
+                Si(nom = Nombre_E)
+                  sw = 1
+                Finsi
+                Leer Reg_Empresas
+              Fin_Mientras
+            Cerrar Empresas
+            
+            Si(sw = 0)
+              Escribir("Lo siento, no pertenece al programa")
+            Sino
+              Abrir Empresas("Leer")
+                Leer Reg_Empresas
+                Mientras(!EOF(Empresas))
+                  Si(nom = Nombre_E)
+                    Escribir("Empleo disponible:")
+                    Escribir("Descripcion: ", Descripcion )
+                    Escribir("Salario: ", Salario )
+                    Escribir("Nombre de la empresa: ", Nombre_E )
+                    Escribir("Titulo necesario: ", Titulo_req )
+                    Escribir("Puntaje necesario: ", Puntaje_min )
+                    Escribir("Cedula del Empleador: ", Cedula_E )
+                    Escribir("Email del empleador ", Email_E )
+                  Finsi
+                  Leer Reg_Empresas
+                Fin_Mientras
+              Cerrar Empresas
+            Finsi
+            
+         Fin_DD
+         
+         FIN
+         
+         
+           
